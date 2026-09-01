@@ -1,0 +1,9 @@
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+.DS_Store
+.idea/
+.vscode/
