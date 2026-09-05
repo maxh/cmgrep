@@ -13,5 +13,7 @@ for i in 01 02 03 04 05 06 07 08 09 10; do
         ./scripts/gen_logs.py
         pkill -x cmgrep
         nohup ./cmgrep serve > server.out 2>&1 < /dev/null &
-    "
+    " &
 done
+
+wait
