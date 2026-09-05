@@ -33,6 +33,12 @@ go build -o cmgrep .
 ./cmgrep "/morerare"
 ./cmgrep -i "/MORERARE"
 ./cmgrep -E "/(morerare|alsoquiterare)"
+
+# test
+go test -v ./...
+
+# test on ssh
+ssh fa26-cs425-7203.cs.illinois.edu 'cd cmgrep && ./cmgrep "/morerare"'
 ```
 
 ## Testing
