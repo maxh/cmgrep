@@ -9,7 +9,7 @@ Ensure you have go installed on your machine per <https://go.dev/doc/install>
 ## Usage
 
 ```
-go run main.go
+go run . --node=1
 ```
 
 ## Building
@@ -37,3 +37,5 @@ protoc --go_out=. --go_opt=paths=source_relative \
        proto/*.proto
 
 ```
+
+
