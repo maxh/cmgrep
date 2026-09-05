@@ -1,5 +1,3 @@
-// Reader, rather than a file, keeps matching testable.
-
 package main
 
 import (

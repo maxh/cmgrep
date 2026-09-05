@@ -2,23 +2,52 @@
 
 cmgrep (Charlie Max GREP) is a tool for distributed grepping.
 
+## Hosts
+
+fa26-cs425-72NN.cs.illinois.edu
+
 ## Installation
 
 Ensure you have go installed on your machine per <https://go.dev/doc/install>
 
+```
+git config core.hooksPath .githooks
+```
+
 ## Usage
 
 ```
-go run . --node=1
+go build -o cmgrep .
+
+# generate this machine's log (node number read from the hostname)
+./scripts/gen_logs.py
+
+# run the server (node number read from the hostname)
+./cmgrep serve
+
+# pass the node explicitly if the hostname is not a VM name
+./scripts/gen_logs.py 3
+./cmgrep serve --node=3
+
+# run the client (from anywhere that can reach the VMs)
+./cmgrep "/morerare"
+./cmgrep -i "/MORERARE"
+./cmgrep -E "/(morerare|alsoquiterare)"
+```
+
+## Testing
+
+```
+# off the VMs, no argument generates all ten logs
+# (fixed seed, so a VM generating its own log produces the same bytes)
+./scripts/gen_logs.py
 ```
 
 ## Building
 
 ```
-# build
-go build -o cmgrep main.go
-# run
-./cmgrep
+# build (the whole package, not just main.go)
+go build -o cmgrep .
 ```
 
 ## Generating protobufs
