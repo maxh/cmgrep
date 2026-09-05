@@ -1,0 +1,21 @@
+#!/bin/sh
+# install with git config core.hooksPath .githooks
+
+if ! git diff --cached --name-only | grep -qE '\.go$|^go\.mod$|^go\.sum$'; then
+	exit 0
+fi
+
+if ! command -v go >/dev/null 2>&1; then
+	echo "pre-commit: go not on PATH, skipping tidy" >&2
+	exit 0
+fi
+
+if ! go mod tidy 2>/dev/null; then
+	echo "pre-commit: go mod tidy failed, committing as-is" >&2
+	exit 0
+fi
+
+if ! git diff --quiet -- go.mod go.sum; then
+	git add go.mod go.sum
+	echo "pre-commit: tidied go.mod/go.sum and staged the result" >&2
+fi

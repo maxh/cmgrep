@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package cmgrep;
+
+option go_package = "github.com/maxh/cmgrep/proto";
+
+service Cmgrep {
+  rpc GrepCount(GrepCountRequest) returns (GrepCountResponse);
+}
+
+message GrepCountRequest {
+  string pattern = 1;
+  bool ignore_case = 2; 
+  bool extended = 3;
+}
+
+message GrepCountResponse {
+  int64 count = 1;
+}
