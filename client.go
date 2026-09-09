@@ -40,8 +40,8 @@ func queryOneNode(ctx context.Context, node int, host string, req *pb.GrepCountR
 	return result{node: node, count: resp.GetCount()}
 }
 
-func queryAllNodes(ctx context.Context, req *pb.GrepCountRequest) []result {
-	results := make([]result, numNodes)
+func queryAllNodes(ctx context.Context, req *pb.GrepCountRequest, nodeCount int) []result {
+	results := make([]result, nodeCount)
 	var wg sync.WaitGroup
 
 	for i := range results {
@@ -61,10 +61,15 @@ func runClient(args []string) error {
 	fs := flag.NewFlagSet("query", flag.ExitOnError)
 	ignoreCase := fs.Bool("i", false, "ignore case")
 	extended := fs.Bool("E", false, "extended regexp")
+	nodeCount := fs.Int("nodes", numNodes, "number of nodes to query")
 	fs.Parse(args)
 
+	if *nodeCount < 1 || *nodeCount > numNodes {
+		return fmt.Errorf("nodes must be between 1 and %d", numNodes)
+	}
+
 	if fs.NArg() != 1 {
-		return fmt.Errorf("usage: cmgrep [-i] [-E] <pattern>")
+		return fmt.Errorf("usage: cmgrep [-i] [-E] [--nodes=N] <pattern>")
 	}
 
 	req := &pb.GrepCountRequest{
@@ -77,7 +82,8 @@ func runClient(args []string) error {
 	defer cancel()
 
 	start := time.Now()
-	results := queryAllNodes(ctx, req)
+	results := queryAllNodes(ctx, req, *nodeCount)
+	elapsed := time.Since(start)
 
 	var total int64
 	failed := 0
@@ -91,7 +97,12 @@ func runClient(args []string) error {
 		total += r.count
 	}
 	fmt.Printf("total:%d\n", total)
-	fmt.Fprintf(os.Stderr, "took %s, %d machines failed\n", time.Since(start), failed)
+	fmt.Fprintf(
+		os.Stderr,
+		"latency_ms:%.3f, %d machines failed\n",
+		float64(elapsed)/float64(time.Millisecond),
+		failed,
+	)
 
 	return nil
 }

@@ -76,7 +76,7 @@ func TestDistributedGrep(t *testing.T) {
 				Pattern:    q.pattern,
 				IgnoreCase: q.ignoreCase,
 				Extended:   q.extended,
-			})
+			}, numNodes)
 
 			for i, r := range results {
 				node := i + 1
@@ -101,7 +101,7 @@ func TestAbsentPatternIsNotAnError(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	for i, r := range queryAllNodes(ctx, &pb.GrepCountRequest{Pattern: "zzz_no_such_pattern_zzz"}) {
+	for i, r := range queryAllNodes(ctx, &pb.GrepCountRequest{Pattern: "zzz_no_such_pattern_zzz"}, numNodes) {
 		if r.err != nil {
 			t.Errorf("machine.%d: %v", i+1, r.err)
 		}
